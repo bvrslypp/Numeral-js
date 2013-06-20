@@ -302,12 +302,15 @@
             }
 
             var w = n._n.toString().split('.')[0],
+                wholeFormat = format.split('.')[0],
                 precision = format.split('.')[1],
-                thousands = format.indexOf(','),
                 d = '',
                 neg = false;
+            var thousands = wholeFormat.indexOf(','),
+                leadingZeros = wholeFormat.indexOf('L') > -1 ? wholeFormat[wholeFormat.indexOf('L') + 1] : 0;
 
-            if (precision) {
+
+                if (precision) {
                 if (precision.indexOf('[') > -1) {
                     precision = precision.replace(']', '');
                     precision = precision.split('[');
@@ -337,8 +340,16 @@
                 neg = true;
             }
 
+            w = w.toString();
+            if (leadingZeros > 0) {
+                if (w.length < leadingZeros) {
+                    var zerosNeeded = leadingZeros - w.length;
+                    w = Array(zerosNeeded + 1).join("0") + w;
+                }
+            }
+
             if (thousands > -1) {
-                w = w.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1' + languages[currentLanguage].delimiters.thousands);
+                w = w.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1' + languages[currentLanguage].delimiters.thousands);
             }
 
             if (format.indexOf('.') === 0) {
